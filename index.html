@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Interes Compuesto</title>
+    <!-- Icono de Calculadora Neón Rojo y Negro generado dinámicamente -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23030303'/><rect x='10' y='10' width='44' height='14' rx='4' fill='%23080808' stroke='%23ff003c' stroke-width='2'/><circle cx='18' cy='36' r='4' fill='%23ff003c'/><circle cx='32' cy='36' r='4' fill='%23ff003c'/><circle cx='46' cy='36' r='4' fill='%23ff003c'/><circle cx='18' cy='50' r='4' fill='%23ff003c'/><circle cx='32' cy='50' r='4' fill='%23ff003c'/><circle cx='46' cy='50' r='4' fill='%23ff003c'/></svg>">
+    
+    <style>
+        :root {
+            --bg-deep: #030303;
+            --bg-card: #080808;
+            --neon-red: #ff003c;
+            --neon-red-glow: rgba(255, 0, 60, 0.5);
+            --neon-green: #00ff66;
+            --neon-green-glow: rgba(0, 255, 102, 0.4);
+            --neon-blue: #00e5ff;
+            --neon-blue-glow: rgba(0, 229, 255, 0.4);
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            padding: 30px 20px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% 5%, rgba(255, 0, 60, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 20% 90%, rgba(255, 0, 60, 0.05) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 100%;
+            width: 95%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--text-main);
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--neon-red-glow), 0 0 25px rgba(255, 0, 60, 0.3);
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: var(--neon-red);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-shadow: 0 0 8px var(--neon-red-glow);
+        }
+
+        /* Panel Principal Centrado */
+        .panel {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        .input-box {
+            background: linear-gradient(145deg, #0d0104, #050001);
+            border: 1px solid var(--neon-red);
+            border-radius: 10px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 110px;
+            box-shadow: 0 0 12px var(--neon-red-glow), inset 0 0 10px rgba(255, 0, 60, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .input-box:hover {
+            box-shadow: 0 0 20px var(--neon-red), inset 0 0 15px rgba(255, 0, 60, 0.3);
+            transform: translateY(-2px);
+        }
+
+        label {
+            font-size: 0.75rem;
+            color: #ff99b3;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            text-shadow: 0 0 5px rgba(255, 0, 60, 0.5);
+        }
+
+        input[type="number"] {
+            background-color: #000000;
+            border: 1px solid #420b16;
+            border-radius: 6px;
+            color: #ffffff;
+            padding: 10px;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: #ff3366;
+            box-shadow: 0 0 10px var(--neon-red);
+            background-color: #0a0002;
+        }
+
+        input[type="number"]::placeholder {
+            color: #44111d;
+            font-size: 0.95rem;
+        }
+
+        .btn-box {
+            display: flex;
+            gap: 15px;
+            grid-column: 1 / -1;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-epic {
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            padding: 14px 30px;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 220px;
+            text-align: center;
+        }
+
+        .btn-calcular {
+            background: linear-gradient(135deg, #33000c 0%, var(--neon-red) 100%);
+            border: 1px solid #ff4d79;
+            box-shadow: 0 0 15px var(--neon-red-glow);
+        }
+        .btn-calcular:hover {
+            background: linear-gradient(135deg, #520013 0%, #ff1a4d 100%);
+            box-shadow: 0 0 25px var(--neon-red), 0 0 40px var(--neon-red-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-guardar {
+            background: linear-gradient(135deg, #003311 0%, #008833 100%);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green-glow);
+        }
+        .btn-guardar:hover {
+            background: linear-gradient(135deg, #004d1a 0%, var(--neon-green) 100%);
+            color: #000;
+            box-shadow: 0 0 25px var(--neon-green), 0 0 40px var(--neon-green-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-cargar {
+            background: linear-gradient(135deg, #002233 0%, #005588 100%);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue-glow);
+        }
+        .btn-cargar:hover {
+            background: linear-gradient(135deg, #00334d 0%, var(--neon-blue) 100%);
+            color: #000;
+            box-shadow: 0 0 25px var(--neon-blue), 0 0 40px var(--neon-blue-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Contenedor de la Tabla */
+        .table-container {
+            background-color: var(--bg-card);
+            border: 1px solid #1a0408;
+            border-radius: 14px;
+            max-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            position: relative;
+            display: none;
+            width: 100%;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #030303;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--neon-red);
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--neon-red);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            position: relative;
+            table-layout: auto;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background-color: #080808;
+            color: var(--neon-red);
+            padding: 16px 15px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--neon-red);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.8), 0 2px 8px var(--neon-red-glow);
+            z-index: 10;
+        }
+
+        tbody td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #120306;
+            font-size: 0.95rem;
+        }
+
+        td.expandable-cell {
+            width: 100%;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 0, 60, 0.05);
+        }
+
+        tbody tr.selected-row {
+            background-color: rgba(255, 0, 60, 0.15) !important;
+            box-shadow: inset 0 0 10px var(--neon-red-glow);
+        }
+
+        .goal-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background-color: #000;
+            border: 2px solid var(--neon-red);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 5px var(--neon-red-glow);
+            vertical-align: middle;
+        }
+
+        .goal-checkbox:checked {
+            background-color: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red);
+        }
+
+        .goal-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .goal-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #420b16;
+            color: #ffffff;
+            padding: 6px 10px;
+            width: 100%;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .goal-input:focus {
+            border-bottom: 1px solid var(--neon-red);
+            background-color: rgba(255, 0, 60, 0.03);
+            box-shadow: 0 2px 5px rgba(255, 0, 60, 0.2);
+        }
+
+        .text-right {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .profit {
+            color: #00ff66;
+            text-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
+            font-weight: 600;
+        }
+
+        .capital-final {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            border: 1px dashed #22050b;
+            border-radius: 14px;
+            background-color: var(--bg-card);
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        @media (max-width: 900px) {
+            .panel {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+            .panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Calculadora de Interes Compuesto</h1>
+            <p class="subtitle">By: YASMASTARK</p>
+        </header>
+
+        <!-- Panel de Entradas y Botones -->
+        <div class="panel">
+            <div class="input-box">
+                <label for="capital">Capital Inicial ($)</label>
+                <input type="number" id="capital" placeholder="Ej. 1000" step="any">
+            </div>
+
+            <div class="input-box">
+                <label for="riesgoPct">Porcentaje del Capital (%)</label>
+                <input type="number" id="riesgoPct" placeholder="Ej. 10" step="any">
+            </div>
+
+            <div class="input-box">
+                <label for="gananciaPct">Objetivo de Ganancia (%)</label>
+                <input type="number" id="gananciaPct" placeholder="Ej. 20" step="any">
+            </div>
+
+            <div class="input-box">
+                <label for="trades">Número de Trades</label>
+                <input type="number" id="trades" placeholder="Ej. 15" min="1" max="500">
+            </div>
+
+            <div class="btn-box">
+                <button class="btn-epic btn-calcular" onclick="calcularInteresCompuesto()">Calcular</button>
+                <button class="btn-epic btn-guardar" onclick="guardarProgreso()">Guardar</button>
+                <button class="btn-epic btn-cargar" onclick="document.getElementById('fileInput').click()">Cargar</button>
+                <!-- Input oculto para cargar archivos locales -->
+                <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="cargarProgreso(event)">
+            </div>
+        </div>
+
+        <!-- Mensaje de Estado Inicial -->
+        <div id="emptyState" class="empty-state">
+            Introduce los datos en las casillas y presiona "Calcular"
+        </div>
+
+        <!-- Tabla con Scroll y Cabecera Fija -->
+        <div class="table-container" id="tableContainer">
+            <table id="tablaResultados">
+                <thead>
+                    <tr>
+                        <th>Trade #</th>
+                        <th class="text-right">Capital Inicial</th>
+                        <th class="text-right">Monto Operado</th>
+                        <th class="text-right">Ganancia Neta</th>
+                        <th class="text-right">Capital Final</th>
+                        <th style="text-align: center;">Meta</th>
+                        <th style="width: 100%;">Notas de Meta (Se expande con la pantalla)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Generado dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function calcularInteresCompuesto() {
+            const capitalInput = document.getElementById('capital').value;
+            const riesgoInput = document.getElementById('riesgoPct').value;
+            const gananciaInput = document.getElementById('gananciaPct').value;
+            const tradesInput = document.getElementById('trades').value;
+
+            if (capitalInput === '' || riesgoInput === '' || gananciaInput === '' || tradesInput === '') {
+                alert('Por favor, completa todas las casillas antes de calcular.');
+                return;
+            }
+
+            let capitalActual = parseFloat(capitalInput);
+            const riesgoPct = parseFloat(riesgoInput) / 100;
+            const gananciaPct = parseFloat(gananciaInput) / 100;
+            const totalTrades = parseInt(tradesInput);
+
+            if (isNaN(capitalActual) || isNaN(riesgoPct) || isNaN(gananciaPct) || isNaN(totalTrades) || totalTrades <= 0) {
+                alert('Por favor, introduce valores numéricos válidos.');
+                return;
+            }
+
+            const tbody = document.querySelector('#tablaResultados tbody');
+            tbody.innerHTML = '';
+
+            for (let i = 1; i <= totalTrades; i++) {
+                let montoOperado = capitalActual * riesgoPct;
+                let gananciaNeta = montoOperado * gananciaPct;
+                let capitalFinal = capitalActual + gananciaNeta;
+
+                const tr = document.createElement('tr');
+                
+                tr.onclick = function(e) {
+                    if (e.target.tagName !== 'INPUT') {
+                        document.querySelectorAll('tbody tr').forEach(row => row.classList.remove('selected-row'));
+                        tr.classList.toggle('selected-row');
+                    }
+                };
+
+                tr.innerHTML = `
+                    <td>#${i}</td>
+                    <td class="text-right">$${capitalActual.toFixed(2)}</td>
+                    <td class="text-right">$${montoOperado.toFixed(2)} <span style="font-size:0.75rem; color:var(--text-muted);">(${Math.round(riesgoPct*100)}%)</span></td>
+                    <td class="text-right profit">+$${gananciaNeta.toFixed(2)}</td>
+                    <td class="text-right capital-final">$${capitalFinal.toFixed(2)}</td>
+                    <td style="text-align: center;"><input type="checkbox" class="goal-checkbox" title="Marcar meta cumplida"></td>
+                    <td class="expandable-cell"><input type="text" class="goal-input" placeholder="Escribe tu meta o plan de este trade..."></td>
+                `;
+
+                tbody.appendChild(tr);
+                capitalActual = capitalFinal;
+            }
+
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('tableContainer').style.display = 'block';
+        }
+
+        function guardarProgreso() {
+            const capital = document.getElementById('capital').value;
+            const riesgoPct = document.getElementById('riesgoPct').value;
+            const gananciaPct = document.getElementById('gananciaPct').value;
+            const trades = document.getElementById('trades').value;
+
+            if (capital === '' || trades === '') {
+                alert('No hay datos calculados o ingresados para guardar.');
+                return;
+            }
+
+            const filasData = [];
+            const filas = document.querySelectorAll('#tablaResultados tbody tr');
+            
+            filas.forEach(tr => {
+                const checkbox = tr.querySelector('.goal-checkbox');
+                const inputNota = tr.querySelector('.goal-input');
+                filasData.push({
+                    marcado: checkbox ? checkbox.checked : false,
+                    nota: inputNota ? inputNota.value : ''
+                });
+            });
+
+            const datosGuardar = {
+                capital: capital,
+                riesgoPct: riesgoPct,
+                gananciaPct: gananciaPct,
+                trades: trades,
+                filas: filasData
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosGuardar, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "progreso_trading.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function cargarProgreso(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const datos = JSON.parse(e.target.result);
+                    
+                    document.getElementById('capital').value = datos.capital || '';
+                    document.getElementById('riesgoPct').value = datos.riesgoPct || '';
+                    document.getElementById('gananciaPct').value = datos.gananciaPct || '';
+                    document.getElementById('trades').value = datos.trades || '';
+
+                    calcularInteresCompuesto();
+
+                    if (datos.filas && Array.isArray(datos.filas)) {
+                        const filas = document.querySelectorAll('#tablaResultados tbody tr');
+                        datos.filas.forEach((item, index) => {
+                            if (filas[index]) {
+                                const checkbox = filas[index].querySelector('.goal-checkbox');
+                                const inputNota = filas[index].querySelector('.goal-input');
+                                if (checkbox) checkbox.checked = item.marcado;
+                                if (inputNota) inputNota.value = item.nota;
+                            }
+                        });
+                    }
+
+                    alert('¡Progreso cargado con éxito!');
+                } catch (error) {
+                    alert('Error al leer el archivo. Asegúrate de que sea un archivo de respaldo válido.');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+    </script>
+</body>
+</html>
