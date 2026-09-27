@@ -1,777 +1,840 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Interes Compuesto</title>
-    <!-- Icono de Calculadora Neón Rojo y Negro generado dinámicamente -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%23030303'/><rect x='10' y='10' width='44' height='14' rx='4' fill='%23080808' stroke='%23ff003c' stroke-width='2'/><circle cx='18' cy='36' r='4' fill='%23ff003c'/><circle cx='32' cy='36' r='4' fill='%23ff003c'/><circle cx='46' cy='36' r='4' fill='%23ff003c'/><circle cx='18' cy='50' r='4' fill='%23ff003c'/><circle cx='32' cy='50' r='4' fill='%23ff003c'/><circle cx='46' cy='50' r='4' fill='%23ff003c'/></svg>">
-    
-    <!-- Importar fuentes futuristas y robóticas desde Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+    <title>Calculadora de Interes Compuesto By: YasmaStark</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neonRed: '#ff0033',
+                        neonRedGlow: '#ff1a47',
+                        darkBg: '#050505',
+                        darkCard: '#0f0f12',
+                        darkBorder: '#2a080c'
+                    },
+                    fontFamily: {
+                        digital: ['"Share Tech Mono"', 'Courier', 'monospace'],
+                        futuristic: ['"Orbitron"', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome and Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-deep: #030303;
-            --bg-card: #080808;
-            --neon-red: #ff003c;
-            --neon-red-glow: rgba(255, 0, 60, 0.5);
-            --neon-green: #00ff66;
-            --neon-green-glow: rgba(0, 255, 102, 0.4);
-            --neon-blue: #00e5ff;
-            --neon-blue-glow: rgba(0, 229, 255, 0.4);
-            --text-main: #f0f0f0;
-            --text-muted: #888888;
-            --font-tech: 'Orbitron', sans-serif;
-            --font-mono: 'Share Tech Mono', monospace;
+        .font-digital {
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .font-futuristic {
+            font-family: 'Orbitron', sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        /* Glowing text animation */
+        @keyframes neonGlow {
+            0%, 100% {
+                text-shadow: 0 0 5px rgba(255, 0, 51, 0.6), 0 0 10px rgba(255, 0, 51, 0.4), 0 0 20px rgba(255, 0, 51, 0.2);
+            }
+            50% {
+                text-shadow: 0 0 10px rgba(255, 0, 51, 0.9), 0 0 20px rgba(255, 0, 51, 0.7), 0 0 30px rgba(255, 0, 51, 0.5);
+            }
         }
 
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            padding: 30px 20px;
-            min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 50% 5%, rgba(255, 0, 60, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 20% 90%, rgba(255, 0, 60, 0.05) 0%, transparent 40%);
-            position: relative;
+        .glow-title {
+            animation: neonGlow 3s infinite ease-in-out;
         }
 
-        /* Botón de Ayuda en la esquina superior derecha */
-        .btn-help {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #1a0006 0%, #3d000f 100%);
-            border: 2px solid var(--neon-red);
-            border-radius: 50%;
-            color: var(--text-main);
-            font-family: var(--font-tech);
-            font-size: 1.3rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--neon-red-glow);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            outline: none;
-            text-shadow: 0 0 8px var(--neon-red);
+        .neon-box {
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.15), inset 0 0 10px rgba(255, 0, 51, 0.05);
+            border: 1px solid rgba(255, 0, 51, 0.3);
         }
 
-        .btn-help:hover {
-            background: var(--neon-red);
-            color: #ffffff;
-            box-shadow: 0 0 25px var(--neon-red), 0 0 40px var(--neon-red-glow);
-            transform: scale(1.1) rotate(10deg);
+        .neon-box:focus-within {
+            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4), inset 0 0 5px rgba(255, 0, 51, 0.2);
+            border-color: #ff0033;
         }
 
-        /* Ventana Modal de Instrucciones */
-        .modal-overlay {
+        .neon-btn {
+            background: linear-gradient(135deg, #cc0029 0%, #ff0033 100%);
+            box-shadow: 0 4px 15px rgba(255, 0, 51, 0.4);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .neon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(255, 0, 51, 0.7);
+        }
+
+        .neon-btn:active {
+            transform: scale(0.97);
+        }
+
+        .secondary-btn {
+            background: rgba(20, 20, 25, 0.8);
+            border: 1px solid rgba(255, 0, 51, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 0, 51, 0.1);
+            border-color: #ff0033;
+            box-shadow: 0 0 10px rgba(255, 0, 51, 0.2);
+        }
+
+        /* Particle background canvas */
+        #particleCanvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(3, 3, 3, 0.85);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            z-index: 0;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background-color: var(--bg-card);
-            border: 2px solid var(--neon-red);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 700px;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 30px;
-            box-shadow: 0 0 35px var(--neon-red-glow), inset 0 0 20px rgba(255, 0, 60, 0.1);
-            position: relative;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 0, 60, 0.3);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            color: var(--neon-red);
-            font-family: var(--font-tech);
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 8px var(--neon-red-glow);
-            font-weight: 700;
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: color 0.2s ease;
-            font-family: var(--font-tech);
-        }
-
-        .modal-close:hover {
-            color: var(--neon-red);
-            text-shadow: 0 0 8px var(--neon-red);
-        }
-
-        .modal-body {
-            color: #cccccc;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .modal-body h3 {
-            color: #ff99b3;
-            font-family: var(--font-tech);
-            font-size: 1.05rem;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .modal-body p {
-            margin-bottom: 12px;
-        }
-
-        .modal-body ul {
-            margin-left: 20px;
-            margin-bottom: 12px;
-        }
-
-        .modal-body li {
-            margin-bottom: 6px;
-        }
-
-        .modal-body strong {
-            color: var(--text-main);
-        }
-
-        .container {
-            max-width: 100%;
-            width: 95%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        h1 {
-            color: var(--text-main);
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px var(--neon-red-glow), 0 0 25px rgba(255, 0, 60, 0.3);
-            margin-bottom: 8px;
-            font-family: var(--font-tech);
-        }
-
-        p.subtitle {
-            color: var(--neon-red);
-            font-family: var(--font-tech);
-            font-size: 1.1rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            font-weight: 700;
-            text-shadow: 0 0 10px var(--neon-red-glow), 0 0 20px rgba(255, 0, 60, 0.4);
-        }
-
-        /* Panel Principal Centrado */
-        .panel {
-            background-color: var(--bg-card);
-            border: 1px solid rgba(255, 0, 60, 0.3);
-            border-radius: 14px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-            margin-bottom: 30px;
-            display: grid;
-            grid-template-columns: repeat(4, minmax(180px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1050px;
-        }
-
-        .input-box {
-            background: linear-gradient(145deg, #0d0104, #050001);
-            border: 1px solid var(--neon-red);
-            border-radius: 10px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 110px;
-            box-shadow: 0 0 12px var(--neon-red-glow), inset 0 0 10px rgba(255, 0, 60, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .input-box:hover {
-            box-shadow: 0 0 20px var(--neon-red), inset 0 0 15px rgba(255, 0, 60, 0.3);
-            transform: translateY(-2px);
-        }
-
-        label {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: none;
-            text-shadow: none;
-        }
-
-        input[type="number"] {
-            background-color: #000000;
-            border: 1px solid #420b16;
-            border-radius: 6px;
-            color: #ffffff;
-            padding: 10px;
-            font-size: 1.1rem;
-            width: 100%;
-            transition: all 0.3s ease;
-            outline: none;
-            font-family: var(--font-mono);
-        }
-
-        input[type="number"]:focus {
-            border-color: #ff3366;
-            box-shadow: 0 0 10px var(--neon-red);
-            background-color: #0a0002;
-        }
-
-        input[type="number"]::placeholder {
-            color: #44111d;
-            font-size: 0.95rem;
-        }
-
-        .btn-box {
-            display: flex;
-            gap: 15px;
-            grid-column: 1 / -1;
-            justify-content: center;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-epic {
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-family: var(--font-tech);
-            font-weight: 700;
-            font-size: 0.95rem;
-            padding: 14px 30px;
-            transition: all 0.3s ease;
-            flex: 1;
-            max-width: 220px;
-            text-align: center;
-        }
-
-        .btn-calcular {
-            background: linear-gradient(135deg, #33000c 0%, var(--neon-red) 100%);
-            border: 1px solid #ff4d79;
-            box-shadow: 0 0 15px var(--neon-red-glow);
-            text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
-        }
-        .btn-calcular:hover {
-            background: linear-gradient(135deg, #520013 0%, #ff1a4d 100%);
-            box-shadow: 0 0 25px var(--neon-red), 0 0 40px var(--neon-red-glow);
-            transform: translateY(-2px);
-        }
-
-        .btn-guardar {
-            background: linear-gradient(135deg, #003311 0%, #008833 100%);
-            border: 1px solid var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green-glow);
-            text-shadow: 0 0 6px rgba(0, 255, 102, 0.8);
-        }
-        .btn-guardar:hover {
-            background: linear-gradient(135deg, #004d1a 0%, var(--neon-green) 100%);
-            color: #000;
-            text-shadow: none;
-            box-shadow: 0 0 25px var(--neon-green), 0 0 40px var(--neon-green-glow);
-            transform: translateY(-2px);
-        }
-
-        .btn-cargar {
-            background: linear-gradient(135deg, #002233 0%, #005588 100%);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue-glow);
-            text-shadow: 0 0 6px rgba(0, 229, 255, 0.8);
-        }
-        .btn-cargar:hover {
-            background: linear-gradient(135deg, #00334d 0%, var(--neon-blue) 100%);
-            color: #000;
-            text-shadow: none;
-            box-shadow: 0 0 25px var(--neon-blue), 0 0 40px var(--neon-blue-glow);
-            transform: translateY(-2px);
-        }
-
-        /* Contenedor de la Tabla */
-        .table-container {
-            background-color: var(--bg-card);
-            border: 1px solid #1a0408;
-            border-radius: 14px;
-            max-height: 500px;
-            overflow-y: auto;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
-            position: relative;
-            display: none;
-            width: 100%;
-        }
-
-        .table-container::-webkit-scrollbar {
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
-        .table-container::-webkit-scrollbar-track {
-            background: #030303;
+        ::-webkit-scrollbar-track {
+            background: #050505;
         }
-        .table-container::-webkit-scrollbar-thumb {
-            background: var(--neon-red);
+        ::-webkit-scrollbar-thumb {
+            background: #2a080c;
             border-radius: 4px;
-            box-shadow: 0 0 8px var(--neon-red);
+            border: 1px solid rgba(255, 0, 51, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff0033;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            position: relative;
-            table-layout: auto;
+        @keyframes iosModalIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        thead th {
-            position: sticky;
-            top: 0;
-            background-color: #080808;
-            color: var(--neon-red);
-            padding: 16px 15px;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid var(--neon-red);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.8), 0 2px 8px var(--neon-red-glow);
-            z-index: 10;
-        }
-
-        tbody td {
-            padding: 14px 15px;
-            border-bottom: 1px solid #120306;
-            font-size: 0.95rem;
-            font-family: var(--font-mono);
-        }
-
-        td.expandable-cell {
-            width: 100%;
-        }
-
-        tbody tr {
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-            cursor: pointer;
-        }
-
-        tbody tr:hover {
-            background-color: rgba(255, 0, 60, 0.05);
-        }
-
-        tbody tr.selected-row {
-            background-color: rgba(255, 0, 60, 0.15) !important;
-            box-shadow: inset 0 0 10px var(--neon-red-glow);
-        }
-
-        .goal-checkbox {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background-color: #000;
-            border: 2px solid var(--neon-red);
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 5px var(--neon-red-glow);
-            vertical-align: middle;
-        }
-
-        .goal-checkbox:checked {
-            background-color: var(--neon-red);
-            box-shadow: 0 0 10px var(--neon-red);
-        }
-
-        .goal-checkbox:checked::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .goal-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px dashed #420b16;
-            color: #ffffff;
-            padding: 6px 10px;
-            width: 100%;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .goal-input:focus {
-            border-bottom: 1px solid var(--neon-red);
-            background-color: rgba(255, 0, 60, 0.03);
-            box-shadow: 0 2px 5px rgba(255, 0, 60, 0.2);
-        }
-
-        .text-right {
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .profit {
-            color: #00ff66;
-            text-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
-            font-weight: 600;
-        }
-
-        .capital-final {
-            color: var(--text-main);
-            font-weight: bold;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.9rem;
-            border: 1px dashed #22050b;
-            border-radius: 14px;
-            background-color: var(--bg-card);
-            width: 100%;
-            max-width: 1050px;
-        }
-
-        @media (max-width: 900px) {
-            .panel {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 550px) {
-            .panel {
-                grid-template-columns: 1fr;
-            }
+        .modal-animate {
+            animation: iosModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
-<body>
+<body class="bg-darkBg text-gray-100 font-sans min-h-screen selection:bg-neonRed selection:text-white relative">
 
-    <!-- Botón de Ayuda (?) Superior Derecho -->
-    <button class="btn-help" onclick="toggleModal(true)" title="Instrucciones de uso">?</button>
+    <canvas id="particleCanvas"></canvas>
 
-    <!-- Ventana Modal de Instrucciones -->
-    <div id="helpModal" class="modal-overlay" onclick="handleModalClick(event)">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Guía de Uso - Calculadora</h2>
-                <button class="modal-close" onclick="toggleModal(false)">&times;</button>
+    <header class="relative z-30 border-b border-darkBorder bg-darkCard/90 backdrop-blur-md sticky top-0 px-4 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-center sm:text-left">
+                <h1 class="text-xl sm:text-2xl font-black tracking-wider font-futuristic text-neonRed glow-title uppercase">
+                    Calculadora de Interes Compuesto By: YasmaStark
+                </h1>
+                <p class="text-xs text-gray-400 mt-0.5 tracking-wide">Terminal Profesional de Gestión de Capital y Trades</p>
             </div>
-            <div class="modal-body">
-                <p>Bienvenido a la <strong>Calculadora de Interés Compuesto</strong> para trading. Esta herramienta te permite planificar y proyectar el crecimiento exponencial de tu capital trade a trade.</p>
-                
-                <h3>1. Parámetros de Entrada (Panel Superior)</h3>
-                <ul>
-                    <li><strong>Capital Inicial ($):</strong> La cantidad de dinero con la que inicias tu cuenta o plan de trading (ej. 1000).</li>
-                    <li><strong>Porcentaje del Capital (%):</strong> El porcentaje de tu capital total que arriesgarás o utilizarás en cada operación individual (ej. 10 para usar el 10%).</li>
-                    <li><strong>Objetivo de Ganancia (%):</strong> El porcentaje de retorno o beneficio que esperas obtener sobre el monto operado en cada trade (ej. 20 para ganar un 20%).</li>
-                    <li><strong>Número de Trades:</strong> La cantidad total de operaciones o filas que deseas proyectar en tu tabla (ej. 15 trades).</li>
-                </ul>
+            <div class="flex items-center gap-3">
+                <button onclick="openModal('helpModal')" class="secondary-btn px-4 py-2 rounded-xl text-sm font-semibold text-gray-200 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-neonRed"></i>
+                    <span>¿Cómo Funciona?</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-                <h3>2. Cómo Calcular</h3>
-                <p>Una vez completadas todas las casillas del panel superior, haz clic en el botón rojo <strong>"CALCULAR"</strong>. Esto generará dinámicamente la tabla detallada trade por trade con los montos operados, ganancias netas y capitales resultantes.</p>
+    <section class="max-w-7xl mx-auto px-4 pt-6 relative z-10">
+        <div id="summaryBanner" class="bg-darkCard neon-box rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="w-10 h-10 rounded-xl bg-neonRed/10 border border-neonRed/40 flex items-center justify-center text-neonRed shrink-0">
+                    <i class="fa-solid fa-bolt-lightning text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-gray-400 tracking-wider uppercase">Resumen Último Trade Seleccionado / Activo</span>
+                    <h3 id="summaryTitle" class="text-lg font-bold font-digital text-white">Esperando Cálculo...</h3>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full md:w-auto text-center">
+                <div class="bg-black/40 px-3 py-2 rounded-xl border border-darkBorder flex flex-col justify-center">
+                    <span class="text-[10px] text-gray-400 block mb-1">Capital Inicial</span>
+                    <span id="sumInitCap" class="font-digital text-neonRed font-bold transition-all duration-200" style="font-size: 1.15rem;">$0.00</span>
+                </div>
+                <div class="bg-black/40 px-3 py-2 rounded-xl border border-darkBorder flex flex-col justify-center">
+                    <span class="text-[10px] text-gray-400 block mb-1">Ganancia Proy.</span>
+                    <span id="sumProfit" class="font-digital text-emerald-400 font-bold transition-all duration-200" style="font-size: 1.15rem;">+$0.00</span>
+                </div>
+                <div class="bg-black/40 px-3 py-2 rounded-xl border border-darkBorder flex flex-col justify-center">
+                    <span class="text-[10px] text-gray-400 block mb-1">Extracción</span>
+                    <span id="sumWithdraw" class="font-digital text-amber-400 font-bold transition-all duration-200" style="font-size: 1.15rem;">$0.00</span>
+                </div>
+                <div class="bg-black/40 px-3 py-2 rounded-xl border border-darkBorder flex flex-col justify-center">
+                    <span class="text-[10px] text-gray-400 block mb-1">Capital Final</span>
+                    <span id="sumFinalCap" class="font-digital text-white font-bold transition-all duration-200" style="font-size: 1.15rem;">$0.00</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <h3>3. Funciones de la Tabla Interactiva</h3>
-                <ul>
-                    <li><strong>Marcar Metas (Checkbox):</strong> Cada fila cuenta con una casilla de verificación en la columna "Meta". Puedes marcarla una vez que hayas ejecutado y cumplido con éxito tu trade.</li>
-                    <li><strong>Notas de Meta:</strong> Cada trade incluye un campo de texto adaptable en la última columna para que anotes tus observaciones, pares operados, gestión de riesgo o estrategia aplicada.</li>
-                    <li><strong>Selección de Fila:</strong> Haz clic en cualquier fila de la tabla para resaltarla y mantener el enfoque visual en tu operación actual.</li>
-                </ul>
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6 relative z-10">
+        <div class="bg-darkCard neon-box rounded-2xl p-5 sm:p-6">
+            <h2 class="text-sm font-bold text-gray-300 tracking-wider uppercase mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-neonRed"></i> Parámetros de Operación
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase">Capital Inicial ($)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-neonRed font-digital">$</span>
+                        <input type="number" id="initCapital" placeholder="Ej. 1000" step="any" class="w-full bg-black/60 border border-darkBorder rounded-xl pl-8 pr-4 py-2.5 font-digital text-white focus:outline-none focus:border-neonRed transition-colors">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase">% a Usar por Trade</label>
+                    <div class="relative">
+                        <input type="number" id="tradePercent" placeholder="Ej. 100" step="any" min="0.1" max="100" class="w-full bg-black/60 border border-darkBorder rounded-xl pl-4 pr-8 py-2.5 font-digital text-white focus:outline-none focus:border-neonRed transition-colors">
+                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-neonRed font-digital">%</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase">Objetivo Ganancia por Trade (%)</label>
+                    <div class="relative">
+                        <input type="number" id="profitPercent" placeholder="Ej. 10" step="any" class="w-full bg-black/60 border border-darkBorder rounded-xl pl-4 pr-8 py-2.5 font-digital text-white focus:outline-none focus:border-neonRed transition-colors">
+                        <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-neonRed font-digital">%</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase">Número de Trades</label>
+                    <div class="relative">
+                        <input type="number" id="totalTrades" placeholder="Ej. 30" min="1" max="500" class="w-full bg-black/60 border border-darkBorder rounded-xl px-4 py-2.5 font-digital text-white focus:outline-none focus:border-neonRed transition-colors">
+                    </div>
+                </div>
+            </div>
 
-                <h3>4. Guardar y Cargar Progreso</h3>
-                <ul>
-                    <li><strong>Guardar (Botón Verde):</strong> Te permite exportar tu tabla actual, incluyendo las notas y casillas marcadas, en un archivo local <code>.json</code> guardado en tu dispositivo.</li>
-                    <li><strong>Cargar (Botón Azul):</strong> Te permite importar un archivo <code>.json</code> previamente guardado para restaurar exactamente el estado de tus cálculos y notas.</li>
-                </ul>
+            <!-- Action Button Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-6 pt-5 border-t border-darkBorder">
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="calculateCompound()" class="neon-btn px-6 py-2.5 rounded-xl text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-calculator"></i> Calcular
+                    </button>
+                    <button onclick="openSaveModal()" class="secondary-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-200 flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk text-neonRed"></i> Guardar
+                    </button>
+                    <button onclick="openLoadModal()" class="secondary-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-200 flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-neonRed"></i> Cargar
+                    </button>
+                </div>
+                <div>
+                    <button onclick="openMilestoneModal()" class="neon-btn px-5 py-2.5 rounded-xl text-sm font-bold text-white flex items-center gap-2 bg-gradient-to-r from-red-700 to-rose-600">
+                        <i class="fa-solid fa-trophy text-yellow-300"></i> Proyección a Metas ($10k-$5M)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-darkCard neon-box rounded-2xl overflow-hidden shadow-2xl">
+            <div class="px-5 py-4 border-b border-darkBorder flex items-center justify-between bg-darkCard/90">
+                <h3 class="font-bold text-sm text-gray-300 tracking-wider uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells text-neonRed"></i> Tabla de Interés Compuesto & Extracción
+                </h3>
+                <span id="rowCountBadge" class="text-xs font-digital px-2.5 py-1 bg-neonRed/10 border border-neonRed/30 text-neonRed rounded-lg">0 Trades</span>
+            </div>
+            
+            <div class="overflow-x-auto max-h-[600px] relative">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky top-0 z-20 bg-darkBg border-b border-darkBorder text-xs text-gray-400 font-semibold uppercase tracking-wider">
+                        <tr>
+                            <th class="py-3 px-4 bg-darkBg">Trade #</th>
+                            <th class="py-3 px-4 bg-darkBg">Capital Inicial ($)</th>
+                            <th class="py-3 px-4 bg-darkBg">Monto Riesgo/Usado ($)</th>
+                            <th class="py-3 px-4 bg-darkBg">Ganancia Proy. ($)</th>
+                            <th class="py-3 px-4 bg-darkBg">Retiro / Extracción ($)</th>
+                            <th class="py-3 px-4 bg-darkBg">Capital Final ($)</th>
+                            <th class="py-3 px-4 bg-darkBg">Meta Personal / Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody id="compoundTableBody" class="divide-y divide-darkBorder text-sm font-digital">
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-gray-500 font-sans">
+                                <i class="fa-solid fa-arrow-up text-xl text-neonRed mb-2 block"></i>
+                                Ingrese sus parámetros y haga clic en <strong>Calcular</strong> para generar la tabla.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Expanded Note Modal -->
+    <div id="expandedNoteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-darkCard neon-box w-full max-w-lg rounded-2xl p-6 modal-animate m-4 border border-neonRed/40">
+            <div class="flex items-center justify-between mb-3 border-b border-darkBorder pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-note-sticky text-neonRed"></i> Nota / Meta Completa - Trade <span id="modalNoteTradeNum"></span>
+                </h3>
+                <button onclick="closeModal('expandedNoteModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="mb-4">
+                <textarea id="modalNoteTextarea" rows="5" oninput="saveModalNoteContent(this.value)" class="w-full bg-black/80 border border-darkBorder rounded-xl p-3 text-sm text-gray-200 font-sans focus:outline-none focus:border-neonRed" placeholder="Escribe tu meta o nota detallada aquí..."></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal('expandedNoteModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-white">Guardar y Cerrar</button>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <header>
-            <h1>Calculadora de Interes Compuesto</h1>
-            <p class="subtitle">By: YASMASTARK</p>
-        </header>
-
-        <!-- Panel de Entradas y Botones -->
-        <div class="panel">
-            <div class="input-box">
-                <label for="capital">Capital Inicial ($)</label>
-                <input type="number" id="capital" placeholder="Ej. 1000" step="any">
+    <!-- Save Modal -->
+    <div id="saveModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-darkCard neon-box w-full max-w-md rounded-2xl p-6 modal-animate m-4 border border-neonRed/40">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk text-neonRed"></i> Guardar Configuración
+                </h3>
+                <button onclick="closeModal('saveModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-
-            <div class="input-box">
-                <label for="riesgoPct">Porcentaje del Capital (%)</label>
-                <input type="number" id="riesgoPct" placeholder="Ej. 10" step="any">
+            <p class="text-xs text-gray-400 mb-5">Elige dónde deseas almacenar los datos actuales de tu calculadora:</p>
+            <div class="space-y-3">
+                <button onclick="saveToLocalStorage()" class="w-full secondary-btn p-3 rounded-xl text-left flex items-center justify-between group">
+                    <div>
+                        <span class="block text-sm font-semibold text-white group-hover:text-neonRed transition-colors">Guardar en Navegador (Slot 1)</span>
+                        <span class="text-xs text-gray-400">Acceso rápido local</span>
+                    </div>
+                    <i class="fa-solid fa-database text-neonRed"></i>
+                </button>
+                <button onclick="downloadJSON()" class="w-full secondary-btn p-3 rounded-xl text-left flex items-center justify-between group">
+                    <div>
+                        <span class="block text-sm font-semibold text-white group-hover:text-neonRed transition-colors">Descargar como Archivo JSON</span>
+                        <span class="text-xs text-gray-400">Guarda un archivo en tu dispositivo</span>
+                    </div>
+                    <i class="fa-solid fa-download text-neonRed"></i>
+                </button>
             </div>
-
-            <div class="input-box">
-                <label for="gananciaPct">Objetivo de Ganancia (%)</label>
-                <input type="number" id="gananciaPct" placeholder="Ej. 20" step="any">
-            </div>
-
-            <div class="input-box">
-                <label for="trades">Número de Trades</label>
-                <input type="number" id="trades" placeholder="Ej. 15" min="1" max="500">
-            </div>
-
-            <div class="btn-box">
-                <button class="btn-epic btn-calcular" onclick="calcularInteresCompuesto()">Calcular</button>
-                <button class="btn-epic btn-guardar" onclick="guardarProgreso()">Guardar</button>
-                <button class="btn-epic btn-cargar" onclick="document.getElementById('fileInput').click()">Cargar</button>
-                <!-- Input oculto para cargar archivos locales -->
-                <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="cargarProgreso(event)">
+            <div class="mt-6 text-right">
+                <button onclick="closeModal('saveModal')" class="px-4 py-2 bg-black/40 border border-darkBorder rounded-xl text-xs font-semibold text-gray-300 hover:bg-black/60">Cancelar</button>
             </div>
         </div>
+    </div>
 
-        <!-- Mensaje de Estado Inicial -->
-        <div id="emptyState" class="empty-state">
-            Introduce los datos en las casillas y presiona "Calcular"
+    <!-- Load Modal -->
+    <div id="loadModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-darkCard neon-box w-full max-w-md rounded-2xl p-6 modal-animate m-4 border border-neonRed/40">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-neonRed"></i> Cargar Configuración
+                </h3>
+                <button onclick="closeModal('loadModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-gray-400 mb-5">Selecciona el método de carga:</p>
+            <div class="space-y-3">
+                <button onclick="loadFromLocalStorage()" class="w-full secondary-btn p-3 rounded-xl text-left flex items-center justify-between group">
+                    <div>
+                        <span class="block text-sm font-semibold text-white group-hover:text-neonRed transition-colors">Cargar desde Navegador (Slot 1)</span>
+                        <span class="text-xs text-gray-400">Recuperar datos guardados localmente</span>
+                    </div>
+                    <i class="fa-solid fa-database text-neonRed"></i>
+                </button>
+                <label class="w-full secondary-btn p-3 rounded-xl text-left flex items-center justify-between group cursor-pointer block">
+                    <div>
+                        <span class="block text-sm font-semibold text-white group-hover:text-neonRed transition-colors">Subir Archivo JSON</span>
+                        <span class="text-xs text-gray-400">Selecciona un archivo guardado previamente</span>
+                    </div>
+                    <i class="fa-solid fa-file-arrow-up text-neonRed"></i>
+                    <input type="file" id="jsonFileInput" accept=".json" onchange="loadFromFile(event)" class="hidden">
+                </label>
+            </div>
+            <div class="mt-6 text-right">
+                <button onclick="closeModal('loadModal')" class="px-4 py-2 bg-black/40 border border-darkBorder rounded-xl text-xs font-semibold text-gray-300 hover:bg-black/60">Cancelar</button>
+            </div>
         </div>
+    </div>
 
-        <!-- Tabla con Scroll y Cabecera Fija -->
-        <div class="table-container" id="tableContainer">
-            <table id="tablaResultados">
-                <thead>
-                    <tr>
-                        <th>Trade #</th>
-                        <th class="text-right">Capital Inicial</th>
-                        <th class="text-right">Monto Operado</th>
-                        <th class="text-right">Ganancia Neta</th>
-                        <th class="text-right">Capital Final</th>
-                        <th style="text-align: center;">Meta</th>
-                        <th style="width: 100%;">Notas de Meta (Se expande con la pantalla)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Generado dinámicamente -->
-                </tbody>
-            </table>
+    <!-- Milestone Modal ($10k to $5M) -->
+    <div id="milestoneModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-darkCard neon-box w-full max-w-2xl rounded-2xl p-6 modal-animate m-4 border border-neonRed/40 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between mb-4 border-b border-darkBorder pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-yellow-400"></i> Proyección a Hitos Financieros
+                </h3>
+                <button onclick="closeModal('milestoneModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">Número de trades necesarios para alcanzar cada hito basado en tus parámetros actuales:</p>
+            <div class="overflow-y-auto flex-1 pr-1">
+                <div id="milestoneResults" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamic milestone cards -->
+                </div>
+            </div>
+            <div class="mt-5 pt-3 border-t border-darkBorder text-right">
+                <button onclick="closeModal('milestoneModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-white">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-darkCard neon-box w-full max-w-2xl rounded-2xl p-6 modal-animate m-4 border border-neonRed/40 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between mb-4 border-b border-darkBorder pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-neonRed"></i> Guía de Funciones - YasmaStark
+                </h3>
+                <button onclick="closeModal('helpModal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="overflow-y-auto flex-1 pr-2 space-y-4 text-sm text-gray-300">
+                <div class="bg-black/40 p-3.5 rounded-xl border border-darkBorder">
+                    <h4 class="font-bold text-neonRed mb-1 flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Cálculo de Interés Compuesto</h4>
+                    <p class="text-xs text-gray-400">Ingresa tu Capital Inicial, el porcentaje que arriesgas o usas por trade, tu objetivo de ganancia en % y la cantidad total de trades. Al iniciar, los resultados se mantienen vacíos hasta hacer clic en Calcular.</p>
+                </div>
+                <div class="bg-black/40 p-3.5 rounded-xl border border-darkBorder">
+                    <h4 class="font-bold text-neonRed mb-1 flex items-center gap-2"><i class="fa-solid fa-note-sticky"></i> Botón 'Ver Más' para Notas Extensas</h4>
+                    <p class="text-xs text-gray-400">Si tu nota o meta en un trade es muy extensa, aparecerá automáticamente un botón 'Ver más' para desplegar un editor flotante y leerla o editarla cómodamente.</p>
+                </div>
+                <div class="bg-black/40 p-3.5 rounded-xl border border-darkBorder">
+                    <h4 class="font-bold text-neonRed mb-1 flex items-center gap-2"><i class="fa-solid fa-hand-holding-dollar"></i> Extracción / Retiros Parciales</h4>
+                    <p class="text-xs text-gray-400">En cada trade puedes ingresar una cantidad a retirar. Esta cantidad se restará inmediatamente del capital disponible, y el interés compuesto continuará operando con el remanente exacto.</p>
+                </div>
+                <div class="bg-black/40 p-3.5 rounded-xl border border-darkBorder">
+                    <h4 class="font-bold text-neonRed mb-1 flex items-center gap-2"><i class="fa-solid fa-table-cells"></i> Encabezados Sticky & Resumen Dinámico</h4>
+                    <p class="text-xs text-gray-400">Los encabezados de la tabla permanecen visibles al hacer scroll. El panel superior incluye tipografía auto-ajustable que se agranda o adapta dinámicamente si los montos son muy grandes.</p>
+                </div>
+                <div class="bg-black/40 p-3.5 rounded-xl border border-darkBorder">
+                    <h4 class="font-bold text-neonRed mb-1 flex items-center gap-2"><i class="fa-solid fa-trophy"></i> Proyección a Metas ($10k - $5M)</h4>
+                    <p class="text-xs text-gray-400">Haz clic en el botón de hitos para calcular instantáneamente cuántos trades necesitas para llegar a $10,000, $50,000, $100,000, $250,000, $500,000, $1,000,000, $2,000,000 y $5,000,000.</p>
+                </div>
+                <div class="bg-black/40 p-3.5 rounded-xl border border-darkBorder">
+                    <h4 class="font-bold text-neonRed mb-1 flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Guardar y Cargar</h4>
+                    <p class="text-xs text-gray-400">Puedes guardar tu configuración y notas en el almacenamiento local de tu navegador o descargarla como archivo JSON para respaldarla.</p>
+                </div>
+            </div>
+            <div class="mt-5 pt-3 border-t border-darkBorder text-right">
+                <button onclick="closeModal('helpModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-white">Entendido</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Funciones para la ventana Modal de ayuda
-        function toggleModal(show) {
-            const modal = document.getElementById('helpModal');
-            if (show) {
-                modal.classList.add('active');
+        // Global state for trade data store and notes
+        let tradeDataStore = [];
+        window.savedTradeNotes = window.savedTradeNotes || {};
+        let currentEditingTrade = null;
+
+        // Particle Animation Background
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        for (let i = 0; i < 45; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.4,
+                speedY: (Math.random() - 0.5) * 0.4,
+                opacity: Math.random() * 0.5 + 0.2
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255, 0, 51, 0.4)';
+            ctx.strokeStyle = 'rgba(255, 0, 51, 0.08)';
+
+            particles.forEach((p, index) => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0) p.x = canvas.width;
+                if (p.x > canvas.width) p.x = 0;
+                if (p.y < 0) p.y = canvas.height;
+                if (p.y > canvas.height) p.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 0, 51, ${p.opacity})`;
+                ctx.fill();
+
+                // Connect nearby particles with faint neon lines
+                for (let j = index + 1; j < particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 130) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Utility to format numbers as currency
+        function formatMoney(num) {
+            return '$' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Dynamic font-size scaling based on text length for summary banner values
+        function applyDynamicFontSize(elementId, textValue) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.textContent = textValue;
+            const length = textValue.length;
+            
+            // Adjust font size dynamically so larger numbers automatically shrink/fit perfectly or expand gracefully
+            if (length > 14) {
+                el.style.fontSize = '0.9rem';
+            } else if (length > 11) {
+                el.style.fontSize = '1.05rem';
+            } else if (length > 8) {
+                el.style.fontSize = '1.25rem';
             } else {
-                modal.classList.remove('active');
+                el.style.fontSize = '1.45rem';
             }
         }
 
-        function handleModalClick(event) {
-            if (event.target.id === 'helpModal') {
-                toggleModal(false);
-            }
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
         }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+        function openSaveModal() { openModal('saveModal'); }
+        function openLoadModal() { openModal('loadModal'); }
 
-        function calcularInteresCompuesto() {
-            const capitalInput = document.getElementById('capital').value;
-            const riesgoInput = document.getElementById('riesgoPct').value;
-            const gananciaInput = document.getElementById('gananciaPct').value;
-            const tradesInput = document.getElementById('trades').value;
+        // Main calculation function (triggered explicitly by Calculate button)
+        function calculateCompound() {
+            const initCapitalInput = document.getElementById('initCapital').value;
+            const tradePercentInput = document.getElementById('tradePercent').value;
+            const profitPercentInput = document.getElementById('profitPercent').value;
+            const totalTradesInput = document.getElementById('totalTrades').value;
 
-            if (capitalInput === '' || riesgoInput === '' || gananciaInput === '' || tradesInput === '') {
-                alert('Por favor, completa todas las casillas antes de calcular.');
+            if (initCapitalInput === '' || tradePercentInput === '' || profitPercentInput === '' || totalTradesInput === '') {
+                alertBox('Por favor, llena todas las casillas de parámetros antes de calcular.');
                 return;
             }
 
-            let capitalActual = parseFloat(capitalInput);
-            const riesgoPct = parseFloat(riesgoInput) / 100;
-            const gananciaPct = parseFloat(gananciaInput) / 100;
-            const totalTrades = parseInt(tradesInput);
+            const initCapital = parseFloat(initCapitalInput) || 0;
+            const tradePercent = parseFloat(tradePercentInput) / 100 || 1;
+            const profitPercent = parseFloat(profitPercentInput) / 100 || 0;
+            const totalTrades = parseInt(totalTradesInput) || 1;
 
-            if (isNaN(capitalActual) || isNaN(riesgoPct) || isNaN(gananciaPct) || isNaN(totalTrades) || totalTrades <= 0) {
-                alert('Por favor, introduce valores numéricos válidos.');
-                return;
-            }
+            document.getElementById('rowCountBadge').textContent = totalTrades + ' Trades';
 
-            const tbody = document.querySelector('#tablaResultados tbody');
+            let currentCapital = initCapital;
+            tradeDataStore = [];
+
+            let tbody = document.getElementById('compoundTableBody');
             tbody.innerHTML = '';
 
             for (let i = 1; i <= totalTrades; i++) {
-                let montoOperado = capitalActual * riesgoPct;
-                let gananciaNeta = montoOperado * gananciaPct;
-                let capitalFinal = capitalActual + gananciaNeta;
-
-                const tr = document.createElement('tr');
+                let initialTradeCap = currentCapital;
+                let usedCapital = initialTradeCap * tradePercent;
+                let projectedProfit = usedCapital * profitPercent;
                 
-                tr.onclick = function(e) {
-                    if (e.target.tagName !== 'INPUT') {
-                        document.querySelectorAll('tbody tr').forEach(row => row.classList.remove('selected-row'));
-                        tr.classList.toggle('selected-row');
-                    }
-                };
+                let existing = window.savedTradeNotes && window.savedTradeNotes[i] ? window.savedTradeNotes[i] : { note: '', withdraw: 0 };
+                let withdrawAmount = parseFloat(existing.withdraw) || 0;
+                let noteText = existing.note || '';
 
-                tr.innerHTML = `
-                    <td>#${i}</td>
-                    <td class="text-right">$${capitalActual.toFixed(2)}</td>
-                    <td class="text-right">$${montoOperado.toFixed(2)} <span style="font-size:0.75rem; color:var(--text-muted);">(${Math.round(riesgoPct*100)}%)</span></td>
-                    <td class="text-right profit">+$${gananciaNeta.toFixed(2)}</td>
-                    <td class="text-right capital-final">$${capitalFinal.toFixed(2)}</td>
-                    <td style="text-align: center;"><input type="checkbox" class="goal-checkbox" title="Marcar meta cumplida"></td>
-                    <td class="expandable-cell"><input type="text" class="goal-input" placeholder="Escribe tu meta o plan de este trade..."></td>
+                let finalCapital = initialTradeCap + projectedProfit - withdrawAmount;
+                if (finalCapital < 0) finalCapital = 0;
+
+                tradeDataStore.push({
+                    tradeNum: i,
+                    initialCapital: initialTradeCap,
+                    usedCapital: usedCapital,
+                    projectedProfit: projectedProfit,
+                    withdraw: withdrawAmount,
+                    finalCapital: finalCapital,
+                    note: noteText
+                });
+
+                let row = document.createElement('tr');
+                row.className = 'hover:bg-red-950/20 transition-colors border-b border-darkBorder/50 group';
+                
+                // Truncate note display if too long and add 'Ver más' button
+                let isLongNote = noteText.length > 25;
+                let displayNoteHtml = `
+                    <div class="flex items-center gap-2">
+                        <input type="text" value="${noteText}" placeholder="Meta o nota..." oninput="updateNote(${i}, this.value)" class="w-full bg-black/60 border border-darkBorder rounded-lg px-3 py-1 text-xs text-gray-300 font-sans focus:outline-none focus:border-neonRed truncate">
+                        ${isLongNote || noteText.length > 0 ? `<button onclick="openExpandedNote(${i})" class="text-[10px] bg-neonRed/20 border border-neonRed/40 text-neonRed px-2 py-1 rounded hover:bg-neonRed hover:text-white transition-all whitespace-nowrap"><i class="fa-solid fa-expand"></i> Ver más</button>` : `<button onclick="openExpandedNote(${i})" class="text-[10px] bg-black/40 border border-darkBorder text-gray-400 px-2 py-1 rounded hover:border-neonRed hover:text-neonRed transition-all whitespace-nowrap"><i class="fa-solid fa-plus"></i></button>`}
+                    </div>
                 `;
 
-                tbody.appendChild(tr);
-                capitalActual = capitalFinal;
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-neonRed font-bold">#${i}</td>
+                    <td class="py-3 px-4 text-gray-200">${formatMoney(initialTradeCap)}</td>
+                    <td class="py-3 px-4 text-gray-300">${formatMoney(usedCapital)}</td>
+                    <td class="py-3 px-4 text-emerald-400">+${formatMoney(projectedProfit)}</td>
+                    <td class="py-3 px-4">
+                        <input type="number" step="any" value="${withdrawAmount > 0 ? withdrawAmount : ''}" placeholder="0.00" oninput="updateWithdraw(${i}, this.value)" class="w-28 bg-black/80 border border-darkBorder rounded-lg px-2.5 py-1 text-amber-400 font-digital focus:outline-none focus:border-amber-500">
+                    </td>
+                    <td class="py-3 px-4 font-bold text-white">${formatMoney(finalCapital)}</td>
+                    <td class="py-3 px-4" id="noteCell_${i}">
+                        ${displayNoteHtml}
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                currentCapital = finalCapital;
+                if (currentCapital <= 0 && i < totalTrades) {
+                    currentCapital = 0;
+                }
             }
 
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('tableContainer').style.display = 'block';
+            updateSummaryBanner(totalTrades);
+            alertBox('¡Cálculo generado correctamente!');
         }
 
-        function guardarProgreso() {
-            const capital = document.getElementById('capital').value;
-            const riesgoPct = document.getElementById('riesgoPct').value;
-            const gananciaPct = document.getElementById('gananciaPct').value;
-            const trades = document.getElementById('trades').value;
+        // Expanded note modal handler
+        function openExpandedNote(tradeIndex) {
+            currentEditingTrade = tradeIndex;
+            document.getElementById('modalNoteTradeNum').textContent = '#' + tradeIndex;
+            let noteObj = window.savedTradeNotes && window.savedTradeNotes[tradeIndex] ? window.savedTradeNotes[tradeIndex] : { note: '', withdraw: 0 };
+            document.getElementById('modalNoteTextarea').value = noteObj.note || '';
+            openModal('expandedNoteModal');
+        }
 
-            if (capital === '' || trades === '') {
-                alert('No hay datos calculados o ingresados para guardar.');
+        function saveModalNoteContent(val) {
+            if (currentEditingTrade === null) return;
+            if (!window.savedTradeNotes) window.savedTradeNotes = {};
+            if (!window.savedTradeNotes[currentEditingTrade]) window.savedTradeNotes[currentEditingTrade] = { note: '', withdraw: 0 };
+            window.savedTradeNotes[currentEditingTrade].note = val;
+
+            let cell = document.getElementById(`noteCell_${currentEditingTrade}`);
+            if (cell) {
+                let inputEl = cell.querySelector('input[type="text"]');
+                if (inputEl) inputEl.value = val;
+            }
+        }
+
+        // Update individual trade withdrawal and recalculate subsequent rows dynamically
+        function updateWithdraw(tradeIndex, val) {
+            if (!window.savedTradeNotes) window.savedTradeNotes = {};
+            if (!window.savedTradeNotes[tradeIndex]) window.savedTradeNotes[tradeIndex] = { note: '', withdraw: 0 };
+            window.savedTradeNotes[tradeIndex].withdraw = parseFloat(val) || 0;
+            recalculateFromChanges();
+        }
+
+        // Update individual trade note
+        function updateNote(tradeIndex, val) {
+            if (!window.savedTradeNotes) window.savedTradeNotes = {};
+            if (!window.savedTradeNotes[tradeIndex]) window.savedTradeNotes[tradeIndex] = { note: '', withdraw: 0 };
+            window.savedTradeNotes[tradeIndex].note = val;
+        }
+
+        // Recalculate table without resetting notes/withdrawals
+        function recalculateFromChanges() {
+            const initCapital = parseFloat(document.getElementById('initCapital').value) || 0;
+            const tradePercent = parseFloat(document.getElementById('tradePercent').value) / 100 || 1;
+            const profitPercent = parseFloat(document.getElementById('profitPercent').value) / 100 || 0;
+            const totalTrades = parseInt(document.getElementById('totalTrades').value) || 1;
+
+            let currentCapital = initCapital;
+            tradeDataStore = [];
+
+            let tbody = document.getElementById('compoundTableBody');
+            let rows = tbody.children;
+
+            for (let i = 1; i <= totalTrades; i++) {
+                let initialTradeCap = currentCapital;
+                let usedCapital = initialTradeCap * tradePercent;
+                let projectedProfit = usedCapital * profitPercent;
+                
+                let existing = window.savedTradeNotes && window.savedTradeNotes[i] ? window.savedTradeNotes[i] : { note: '', withdraw: 0 };
+                let withdrawAmount = parseFloat(existing.withdraw) || 0;
+                let noteText = existing.note || '';
+
+                let finalCapital = initialTradeCap + projectedProfit - withdrawAmount;
+                if (finalCapital < 0) finalCapital = 0;
+
+                tradeDataStore.push({
+                    tradeNum: i,
+                    initialCapital: initialTradeCap,
+                    usedCapital: usedCapital,
+                    projectedProfit: projectedProfit,
+                    withdraw: withdrawAmount,
+                    finalCapital: finalCapital,
+                    note: noteText
+                });
+
+                if (rows[i - 1] && rows[i - 1].children.length >= 6) {
+                    let cols = rows[i - 1].children;
+                    cols[1].textContent = formatMoney(initialTradeCap);
+                    cols[2].textContent = formatMoney(usedCapital);
+                    cols[3].textContent = '+' + formatMoney(projectedProfit);
+                    cols[5].textContent = formatMoney(finalCapital);
+                }
+
+                currentCapital = finalCapital;
+            }
+            updateSummaryBanner(totalTrades);
+        }
+
+        // Update summary banner with the last trade values and dynamic auto-scaling font sizes
+        function updateSummaryBanner(totalTrades) {
+            if (tradeDataStore.length === 0) return;
+            let lastTrade = tradeDataStore[tradeDataStore.length - 1];
+            document.getElementById('summaryTitle').textContent = `Trade #${lastTrade.tradeNum} (Final)`;
+            
+            applyDynamicFontSize('sumInitCap', formatMoney(lastTrade.initialCapital));
+            applyDynamicFontSize('sumProfit', '+' + formatMoney(lastTrade.projectedProfit));
+            applyDynamicFontSize('sumWithdraw', formatMoney(lastTrade.withdraw));
+            applyDynamicFontSize('sumFinalCap', formatMoney(lastTrade.finalCapital));
+        }
+
+        // Milestone calculator ($10k, $50k, $100k, $250k, $500k, $1M, $2M, $5M)
+        function openMilestoneModal() {
+            const initCapitalInput = document.getElementById('initCapital').value;
+            if (initCapitalInput === '') {
+                alertBox('Por favor, ingresa primero tu Capital Inicial en los parámetros.');
                 return;
             }
 
-            const filasData = [];
-            const filas = document.querySelectorAll('#tablaResultados tbody tr');
-            
-            filas.forEach(tr => {
-                const checkbox = tr.querySelector('.goal-checkbox');
-                const inputNota = tr.querySelector('.goal-input');
-                filasData.push({
-                    marcado: checkbox ? checkbox.checked : false,
-                    nota: inputNota ? inputNota.value : ''
-                });
+            const milestones = [10000, 50000, 100000, 250000, 500000, 1000000, 2000000, 5000000];
+            const initCapital = parseFloat(initCapitalInput) || 1000;
+            const tradePercent = parseFloat(document.getElementById('tradePercent').value) / 100 || 1;
+            const profitPercent = parseFloat(document.getElementById('profitPercent').value) / 100 || 0.1;
+
+            let container = document.getElementById('milestoneResults');
+            container.innerHTML = '';
+
+            milestones.forEach(target => {
+                let tradesNeeded = 0;
+                let cap = initCapital;
+                if (cap >= target) {
+                    tradesNeeded = 0;
+                } else if (profitPercent <= 0) {
+                    tradesNeeded = 'Imposible (0% ganancia)';
+                } else {
+                    let maxLimit = 10000;
+                    while (cap < target && tradesNeeded < maxLimit) {
+                        let used = cap * tradePercent;
+                        let profit = used * profitPercent;
+                        cap += profit;
+                        tradesNeeded++;
+                    }
+                    if (tradesNeeded >= maxLimit) tradesNeeded = 'Más de 10,000';
+                }
+
+                let card = document.createElement('div');
+                card.className = 'bg-black/50 border border-darkBorder rounded-xl p-3.5 flex items-center justify-between';
+                card.innerHTML = `
+                    <div>
+                        <span class="text-xs text-gray-400 block uppercase">Meta Objetivo</span>
+                        <span class="font-digital text-white font-bold text-base">${formatMoney(target)}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-400 block uppercase">Trades Necesarios</span>
+                        <span class="font-digital text-neonRed font-bold text-base">${typeof tradesNeeded === 'number' ? tradesNeeded + ' Trades' : tradesNeeded}</span>
+                    </div>
+                `;
+                container.appendChild(card);
             });
 
-            const datosGuardar = {
-                capital: capital,
-                riesgoPct: riesgoPct,
-                gananciaPct: gananciaPct,
-                trades: trades,
-                filas: filasData
-            };
+            openModal('milestoneModal');
+        }
 
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datosGuardar, null, 2));
+        // Save and Load handlers
+        function saveToLocalStorage() {
+            const state = {
+                initCapital: document.getElementById('initCapital').value,
+                tradePercent: document.getElementById('tradePercent').value,
+                profitPercent: document.getElementById('profitPercent').value,
+                totalTrades: document.getElementById('totalTrades').value,
+                savedTradeNotes: window.savedTradeNotes || {}
+            };
+            localStorage.setItem('yasmaStarkCompoundState', JSON.stringify(state));
+            closeModal('saveModal');
+            alertBox('¡Configuración guardada exitosamente en el navegador!');
+        }
+
+        function loadFromLocalStorage() {
+            const raw = localStorage.getItem('yasmaStarkCompoundState');
+            if (!raw) {
+                alertBox('No se encontró ninguna configuración guardada en el navegador.');
+                return;
+            }
+            try {
+                const state = JSON.parse(raw);
+                document.getElementById('initCapital').value = state.initCapital;
+                document.getElementById('tradePercent').value = state.tradePercent;
+                document.getElementById('profitPercent').value = state.profitPercent;
+                document.getElementById('totalTrades').value = state.totalTrades;
+                window.savedTradeNotes = state.savedTradeNotes || {};
+                calculateCompound();
+                closeModal('loadModal');
+                alertBox('¡Configuración cargada exitosamente!');
+            } catch (e) {
+                alertBox('Error al cargar los datos guardados.');
+            }
+        }
+
+        function downloadJSON() {
+            const state = {
+                initCapital: document.getElementById('initCapital').value,
+                tradePercent: document.getElementById('tradePercent').value,
+                profitPercent: document.getElementById('profitPercent').value,
+                totalTrades: document.getElementById('totalTrades').value,
+                savedTradeNotes: window.savedTradeNotes || {}
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "progreso_trading.json");
+            downloadAnchor.setAttribute("download", "YasmaStark_Compuesto_Config.json");
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
+            closeModal('saveModal');
         }
 
-        function cargarProgreso(event) {
+        function loadFromFile(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const datos = JSON.parse(e.target.result);
-                    
-                    document.getElementById('capital').value = datos.capital || '';
-                    document.getElementById('riesgoPct').value = datos.riesgoPct || '';
-                    document.getElementById('gananciaPct').value = datos.gananciaPct || '';
-                    document.getElementById('trades').value = datos.trades || '';
-
-                    calcularInteresCompuesto();
-
-                    if (datos.filas && Array.isArray(datos.filas)) {
-                        const filas = document.querySelectorAll('#tablaResultados tbody tr');
-                        datos.filas.forEach((item, index) => {
-                            if (filas[index]) {
-                                const checkbox = filas[index].querySelector('.goal-checkbox');
-                                const inputNota = filas[index].querySelector('.goal-input');
-                                if (checkbox) checkbox.checked = item.marcado;
-                                if (inputNota) inputNota.value = item.nota;
-                            }
-                        });
-                    }
-
-                    alert('¡Progreso cargado con éxito!');
-                } catch (error) {
-                    alert('Error al leer el archivo. Asegúrate de que sea un archivo de respaldo válido.');
-                    console.error(error);
+                    const state = JSON.parse(e.target.result);
+                    document.getElementById('initCapital').value = state.initCapital;
+                    document.getElementById('tradePercent').value = state.tradePercent;
+                    document.getElementById('profitPercent').value = state.profitPercent;
+                    document.getElementById('totalTrades').value = state.totalTrades;
+                    window.savedTradeNotes = state.savedTradeNotes || {};
+                    calculateCompound();
+                    closeModal('loadModal');
+                    alertBox('¡Archivo JSON cargado exitosamente!');
+                } catch (err) {
+                    alertBox('El archivo JSON no es válido.');
                 }
             };
             reader.readAsText(file);
-            event.target.value = '';
+        }
+
+        // Custom non-blocking alert notification box
+        function alertBox(message) {
+            let existing = document.getElementById('customAlertBox');
+            if (existing) existing.remove();
+
+            let box = document.createElement('div');
+            box.id = 'customAlertBox';
+            box.className = 'fixed bottom-5 right-5 z-50 bg-darkCard neon-box border border-neonRed text-white px-5 py-3 rounded-2xl shadow-2xl modal-animate flex items-center gap-3';
+            box.innerHTML = `
+                <i class="fa-solid fa-circle-info text-neonRed text-lg"></i>
+                <span class="text-sm font-sans">${message}</span>
+            `;
+            document.body.appendChild(box);
+            setTimeout(() => {
+                if (box) box.remove();
+            }, 3500);
         }
     </script>
 </body>
