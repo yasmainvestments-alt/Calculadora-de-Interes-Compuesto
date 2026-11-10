@@ -12,11 +12,11 @@
             theme: {
                 extend: {
                     colors: {
-                        neonRed: '#ff0033',
-                        neonRedGlow: '#ff1a47',
+                        neonRed: '#00ffff',
+                        neonRedGlow: '#1ae5e5',
                         darkBg: '#050505',
                         darkCard: '#0f0f12',
-                        darkBorder: '#2a080c'
+                        darkBorder: '#082a2a'
                     },
                     fontFamily: {
                         digital: ['"Share Tech Mono"', 'Courier', 'monospace'],
@@ -41,10 +41,10 @@
         /* Glowing text animation */
         @keyframes neonGlow {
             0%, 100% {
-                text-shadow: 0 0 5px rgba(255, 0, 51, 0.6), 0 0 10px rgba(255, 0, 51, 0.4), 0 0 20px rgba(255, 0, 51, 0.2);
+                text-shadow: 0 0 5px rgba(0, 255, 255, 0.6), 0 0 10px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.2);
             }
             50% {
-                text-shadow: 0 0 10px rgba(255, 0, 51, 0.9), 0 0 20px rgba(255, 0, 51, 0.7), 0 0 30px rgba(255, 0, 51, 0.5);
+                text-shadow: 0 0 10px rgba(0, 255, 255, 0.9), 0 0 20px rgba(0, 255, 255, 0.7), 0 0 30px rgba(0, 255, 255, 0.5);
             }
         }
 
@@ -53,24 +53,25 @@
         }
 
         .neon-box {
-            box-shadow: 0 0 15px rgba(255, 0, 51, 0.15), inset 0 0 10px rgba(255, 0, 51, 0.05);
-            border: 1px solid rgba(255, 0, 51, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.15), inset 0 0 10px rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
         }
 
         .neon-box:focus-within {
-            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4), inset 0 0 5px rgba(255, 0, 51, 0.2);
-            border-color: #ff0033;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), inset 0 0 5px rgba(0, 255, 255, 0.2);
+            border-color: #00ffff;
         }
 
         .neon-btn {
-            background: linear-gradient(135deg, #cc0029 0%, #ff0033 100%);
-            box-shadow: 0 4px 15px rgba(255, 0, 51, 0.4);
+            background: linear-gradient(135deg, #00cccc 0%, #00ffff 100%);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.4);
+            color: #000000;
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .neon-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 22px rgba(255, 0, 51, 0.7);
+            box-shadow: 0 6px 22px rgba(0, 255, 255, 0.7);
         }
 
         .neon-btn:active {
@@ -79,14 +80,14 @@
 
         .secondary-btn {
             background: rgba(20, 20, 25, 0.8);
-            border: 1px solid rgba(255, 0, 51, 0.4);
+            border: 1px solid rgba(0, 255, 255, 0.4);
             transition: all 0.2s ease;
         }
 
         .secondary-btn:hover {
-            background: rgba(255, 0, 51, 0.1);
-            border-color: #ff0033;
-            box-shadow: 0 0 10px rgba(255, 0, 51, 0.2);
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
         }
 
         /* Particle background canvas */
@@ -109,12 +110,12 @@
             background: #050505;
         }
         ::-webkit-scrollbar-thumb {
-            background: #2a080c;
+            background: #082a2a;
             border-radius: 4px;
-            border: 1px solid rgba(255, 0, 51, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.2);
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #ff0033;
+            background: #00ffff;
         }
 
         @keyframes iosModalIn {
@@ -126,7 +127,7 @@
         }
     </style>
 </head>
-<body class="bg-darkBg text-gray-100 font-sans min-h-screen selection:bg-neonRed selection:text-white relative">
+<body class="bg-darkBg text-gray-100 font-sans min-h-screen selection:bg-neonRed selection:text-black relative">
 
     <canvas id="particleCanvas"></canvas>
 
@@ -217,7 +218,7 @@
             <!-- Action Button Bar -->
             <div class="flex flex-wrap items-center justify-between gap-3 mt-6 pt-5 border-t border-darkBorder">
                 <div class="flex flex-wrap items-center gap-3">
-                    <button onclick="calculateCompound()" class="neon-btn px-6 py-2.5 rounded-xl text-sm font-bold text-white flex items-center gap-2">
+                    <button onclick="calculateCompound()" class="neon-btn px-6 py-2.5 rounded-xl text-sm font-bold text-black flex items-center gap-2">
                         <i class="fa-solid fa-calculator"></i> Calcular
                     </button>
                     <button onclick="openSaveModal()" class="secondary-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-200 flex items-center gap-2">
@@ -228,8 +229,8 @@
                     </button>
                 </div>
                 <div>
-                    <button onclick="openMilestoneModal()" class="neon-btn px-5 py-2.5 rounded-xl text-sm font-bold text-white flex items-center gap-2 bg-gradient-to-r from-red-700 to-rose-600">
-                        <i class="fa-solid fa-trophy text-yellow-300"></i> Proyección a Metas ($10k-$5M)
+                    <button onclick="openMilestoneModal()" class="neon-btn px-5 py-2.5 rounded-xl text-sm font-bold text-black flex items-center gap-2 bg-gradient-to-r from-teal-400 to-cyan-500">
+                        <i class="fa-solid fa-trophy text-black"></i> Proyección a Metas ($10k-$5M)
                     </button>
                 </div>
             </div>
@@ -282,7 +283,7 @@
                 <textarea id="modalNoteTextarea" rows="5" oninput="saveModalNoteContent(this.value)" class="w-full bg-black/80 border border-darkBorder rounded-xl p-3 text-sm text-gray-200 font-sans focus:outline-none focus:border-neonRed" placeholder="Escribe tu meta o nota detallada aquí..."></textarea>
             </div>
             <div class="flex justify-end gap-3">
-                <button onclick="closeModal('expandedNoteModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-white">Guardar y Cerrar</button>
+                <button onclick="closeModal('expandedNoteModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-black">Guardar y Cerrar</button>
             </div>
         </div>
     </div>
@@ -368,7 +369,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-3 border-t border-darkBorder text-right">
-                <button onclick="closeModal('milestoneModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-white">Cerrar</button>
+                <button onclick="closeModal('milestoneModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-black">Cerrar</button>
             </div>
         </div>
     </div>
@@ -409,7 +410,7 @@
                 </div>
             </div>
             <div class="mt-5 pt-3 border-t border-darkBorder text-right">
-                <button onclick="closeModal('helpModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-white">Entendido</button>
+                <button onclick="closeModal('helpModal')" class="px-5 py-2 neon-btn rounded-xl text-xs font-bold text-black">Entendido</button>
             </div>
         </div>
     </div>
@@ -445,8 +446,8 @@
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(255, 0, 51, 0.4)';
-            ctx.strokeStyle = 'rgba(255, 0, 51, 0.08)';
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.4)';
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.08)';
 
             particles.forEach((p, index) => {
                 p.x += p.speedX;
@@ -459,7 +460,7 @@
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 0, 51, ${p.opacity})`;
+                ctx.fillStyle = `rgba(0, 255, 255, ${p.opacity})`;
                 ctx.fill();
 
                 // Connect nearby particles with faint neon lines
@@ -559,14 +560,14 @@
                 });
 
                 let row = document.createElement('tr');
-                row.className = 'hover:bg-red-950/20 transition-colors border-b border-darkBorder/50 group';
+                row.className = 'hover:bg-cyan-950/20 transition-colors border-b border-darkBorder/50 group';
                 
                 // Truncate note display if too long and add 'Ver más' button
                 let isLongNote = noteText.length > 25;
                 let displayNoteHtml = `
                     <div class="flex items-center gap-2">
                         <input type="text" value="${noteText}" placeholder="Meta o nota..." oninput="updateNote(${i}, this.value)" class="w-full bg-black/60 border border-darkBorder rounded-lg px-3 py-1 text-xs text-gray-300 font-sans focus:outline-none focus:border-neonRed truncate">
-                        ${isLongNote || noteText.length > 0 ? `<button onclick="openExpandedNote(${i})" class="text-[10px] bg-neonRed/20 border border-neonRed/40 text-neonRed px-2 py-1 rounded hover:bg-neonRed hover:text-white transition-all whitespace-nowrap"><i class="fa-solid fa-expand"></i> Ver más</button>` : `<button onclick="openExpandedNote(${i})" class="text-[10px] bg-black/40 border border-darkBorder text-gray-400 px-2 py-1 rounded hover:border-neonRed hover:text-neonRed transition-all whitespace-nowrap"><i class="fa-solid fa-plus"></i></button>`}
+                        ${isLongNote || noteText.length > 0 ? `<button onclick="openExpandedNote(${i})" class="text-[10px] bg-neonRed/20 border border-neonRed/40 text-neonRed px-2 py-1 rounded hover:bg-neonRed hover:text-black transition-all whitespace-nowrap"><i class="fa-solid fa-expand"></i> Ver más</button>` : `<button onclick="openExpandedNote(${i})" class="text-[10px] bg-black/40 border border-darkBorder text-gray-400 px-2 py-1 rounded hover:border-neonRed hover:text-neonRed transition-all whitespace-nowrap"><i class="fa-solid fa-plus"></i></button>`}
                     </div>
                 `;
 
@@ -680,15 +681,18 @@
             updateSummaryBanner(totalTrades);
         }
 
-        // Update summary banner with the last trade values and dynamic auto-scaling font sizes
+        // Update summary banner with total accumulated withdrawals and last trade values
         function updateSummaryBanner(totalTrades) {
             if (tradeDataStore.length === 0) return;
             let lastTrade = tradeDataStore[tradeDataStore.length - 1];
             document.getElementById('summaryTitle').textContent = `Trade #${lastTrade.tradeNum} (Final)`;
             
+            // Sum up all extractions across all trades to reflect total extracted amount in the top banner
+            let totalWithdrawals = tradeDataStore.reduce((sum, t) => sum + (t.withdraw || 0), 0);
+
             applyDynamicFontSize('sumInitCap', formatMoney(lastTrade.initialCapital));
             applyDynamicFontSize('sumProfit', '+' + formatMoney(lastTrade.projectedProfit));
-            applyDynamicFontSize('sumWithdraw', formatMoney(lastTrade.withdraw));
+            applyDynamicFontSize('sumWithdraw', formatMoney(totalWithdrawals));
             applyDynamicFontSize('sumFinalCap', formatMoney(lastTrade.finalCapital));
         }
 
